@@ -2,7 +2,9 @@
 import React, { useEffect, useState } from "react";
 import {MenuItem, FormControl, Select, Card, CardContent} from '@material-ui/core';
 import Infobox from './components/Infobox';
+import Table from './components/Table';
 import Map from './components/Map';
+import {sortData} from "./components/Utils";
 import './App.css';
 
 
@@ -13,6 +15,7 @@ function App() {
   const [country, setInputCountry] = useState("worldwide");
   const [countryInfo, setCountryInfo] = useState({});
   const [countries, setCountries] = useState([]);
+  const [tableData, setTableData]= useState([]);
 
 
   useEffect(()=>{
@@ -33,22 +36,23 @@ useEffect(()=>{
    await fetch("https://disease.sh/v3/covid-19/countries")
    .then((response) => response.json())
    .then((data)=>{
-     const countries = data.map((country) => ({
-         name: country.country,
-         value: country.countryInfo.iso2
-       }));
-
-       setCountries(countries)
+    const countries = data.map((country) => ({
+      name: country.country,
+      value: country.countryInfo.iso2,
+      
+    }));
+    const sortedData = sortData(data)
+    setCountries(countries)
+    setTableData(sortedData)
    })
   }
   getCountriesData();
 },[])
 
-const onCountryChange = async (event) => {
-  const countryCode = event.target.value;
+const onCountryChange = async (e) => {
+  const countryCode = e.target.value;
 
-  console.log("selected:" + countryCode);
-  setCountries(countryCode);
+
 
   const url = countryCode === "worldwide" ? "https://disease.sh/v3/covid-19/all" : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
 
@@ -69,8 +73,8 @@ const onCountryChange = async (event) => {
           <h1>Covid-19 Tracker</h1>
           <FormControl className="app__dropdown">
             <Select variant='outlined' value={country} onChange={onCountryChange}>
-            <MenuItem value="worldwide">WorldWide</MenuItem>
-              {countries.map((country)=>(
+            <MenuItem value="worldwide">Worldwide</MenuItem>
+              {countries.map((country) => (
                 <MenuItem value={country.value}>{country.name}</MenuItem>
               ))}
 
@@ -88,7 +92,7 @@ const onCountryChange = async (event) => {
         <Card className="app__right">
           <CardContent>
             <h3>Live Cases by Country</h3>
-            {/* table */}
+                <Table countries={tableData} />
             <h3>WorldWide new cases</h3>
 
           </CardContent>
