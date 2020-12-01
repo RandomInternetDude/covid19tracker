@@ -6,6 +6,7 @@ import Table from './components/Table';
 import Map from './components/Map';
 import {sortData} from "./components/Utils";
 import './App.css';
+import LineGraph from "./components/LineGraph";
 
 
 // https://disease.sh/v3/covid-19/countries
@@ -16,6 +17,7 @@ function App() {
   const [countryInfo, setCountryInfo] = useState({});
   const [countries, setCountries] = useState([]);
   const [tableData, setTableData]= useState([]);
+  const [casesType, setCasesType] = useState("cases");
 
 
   useEffect(()=>{
@@ -83,9 +85,9 @@ const onCountryChange = async (e) => {
         </div>
 
         <div className="app__stats">
-              <Infobox title="Coronavirus Cases" cases={countryInfo.todayCases} total={countryInfo.cases} />
-              <Infobox title="Recovered" cases={countryInfo.todayRecovered} total={countryInfo.recovered} />
-              <Infobox title="Deaths" cases={countryInfo.todayDeaths} total={countryInfo.deaths} />
+              <Infobox title="Coronavirus Cases" cases={countryInfo.todayCases} total={countryInfo.cases}  onClick={(e) => setCasesType("cases")} />
+              <Infobox title="Recovered" cases={countryInfo.todayRecovered} total={countryInfo.recovered}  onClick={(e) => setCasesType("recovered")} />
+              <Infobox title="Deaths" cases={countryInfo.todayDeaths} total={countryInfo.deaths}  onClick={(e) => setCasesType("deaths")} />
         </div>
           <Map />
         </div>
@@ -94,7 +96,7 @@ const onCountryChange = async (e) => {
             <h3>Live Cases by Country</h3>
                 <Table countries={tableData} />
             <h3>WorldWide new cases</h3>
-
+                <LineGraph casesType={casesType} />
           </CardContent>
         </Card>
     </div>
