@@ -68,8 +68,13 @@ const onCountryChange = async (e) => {
   .then((data)=>{
     setInputCountry(countryCode);
     setCountryInfo(data);
+
+    if (countryCode === "worldwide"){
+    setMapZoom(1);
+    } else {
     setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
     setMapZoom(4);
+    }
   });
 };
 
